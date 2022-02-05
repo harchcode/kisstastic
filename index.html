@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Kiss all the fishes you can find! But with caution!"
+    />
+    <title>Kisstastic</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div id="root" class="bg-blue-100 flex items-center">
+      <div id="play-area" class="bg-pink-200 mx-auto"></div>
+      <div
+        id="title-ui"
+        class="absolute w-full h-full flex items-center hidden noselect"
+      >
+        <div
+          class="text-center w-full mt-64 font-bold text-white text-stroke text-3xl"
+        >
+          Tap to start
+        </div>
+      </div>
+      <div id="play-ui" class="absolute w-full h-full">
+        <div
+          id="score"
+          class="font-bold text-white text-stroke text-3xl px-4 py-2 noselect"
+        >
+          <!-- <span>0</span>
+          <span>0</span>
+          <span>0</span>
+          <span>0</span>
+          <span>0</span>
+          <span>0</span> -->
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
