@@ -1,10 +1,19 @@
 import * as PIXI from "pixi.js";
 import { Scene } from "../types";
-import { addInputListener, removeInputListener } from "../game";
+import {
+  addInputListener,
+  changeScene,
+  hideUI,
+  removeInputListener,
+  showUI
+} from "../game";
 import { Pool } from "../utils/pool";
 import { addScore, setScore } from "../utils/score";
-import { Fish } from "../entities/fish";
+import { Fish, FishType } from "../entities/fish";
 import { Player } from "../entities/player";
+import { getRandomArbitrary } from "../utils/math";
+import { APP_H } from "../constants";
+import { GameoverScene } from "./gameover";
 
 const SPAWN_ON_TIME = 1.0;
 
@@ -12,8 +21,11 @@ export class PlayScene implements Scene {
   player = new Player();
   fishes: Pool<Fish>;
   container = new PIXI.Container();
-  spawnTimer = 0;
+  goodTimer = 0;
+  badTimer = 0;
+  badNextSpawnTime = getRandomArbitrary(0.2, 2.0);
   streak = 0;
+  started = false;
 
   createFish = () => {
     const fish = new Fish();
@@ -25,16 +37,21 @@ export class PlayScene implements Scene {
   };
 
   constructor() {
-    this.fishes = new Pool(this.createFish, 16);
+    this.fishes = new Pool(this.createFish, 32);
   }
 
   handleClick = () => {
+    if (!this.started) {
+      this.started = true;
+      return;
+    }
+
     this.player.changeDirection();
   };
 
-  spawn = (offDT: number) => {
+  spawn = (offDT: number, type = FishType.Wow) => {
     const fish = this.fishes.obtain();
-    fish.reset(offDT);
+    fish.reset(offDT, type);
   };
 
   removeFish = (fish: Fish) => {
@@ -42,8 +59,12 @@ export class PlayScene implements Scene {
     this.fishes.free(fish);
   };
 
-  HIT_THRESHOLD_X = 50;
-  HIT_THRESHOLD_Y = 100;
+  gameOver = () => {
+    changeScene(new GameoverScene(this.container));
+  };
+
+  HIT_THRESHOLD_X = 75;
+  HIT_THRESHOLD_Y = 40;
 
   checkPlayerCollision = (fish: Fish) => {
     const { sprite: playerSprite } = this.player;
@@ -61,15 +82,26 @@ export class PlayScene implements Scene {
     if (pr >= fl && pr <= fl + this.HIT_THRESHOLD_X) {
       if (pb >= ft && pt <= fb) {
         if (!fish.isKissed) {
+          if (fish.type === FishType.Ouch) {
+            this.gameOver();
+            return;
+          }
+
           fish.setKissed();
 
           this.streak += 1;
 
           addScore(Math.min(this.streak, 10));
         }
-      } else {
-        this.streak = 0;
       }
+    }
+
+    if (
+      pr > fl + this.HIT_THRESHOLD_X &&
+      !fish.isKissed &&
+      fish.type === FishType.Wow
+    ) {
+      this.streak = 0;
     }
   };
 
@@ -78,12 +110,24 @@ export class PlayScene implements Scene {
 
     container.addChild(player.sprite);
 
+    showUI("play");
+
     setScore(0);
     addInputListener(this.handleClick);
   };
 
   update = (dt: number) => {
+    if (!this.started) return;
+
     this.player.update(dt);
+
+    if (
+      this.player.sprite.y <= -this.player.sprite.height * 0.5 ||
+      this.player.sprite.y >= APP_H - this.player.sprite.height * 0.5
+    ) {
+      this.gameOver();
+      return;
+    }
 
     const fishes = this.fishes.getAll();
 
@@ -95,15 +139,25 @@ export class PlayScene implements Scene {
       this.checkPlayerCollision(fish);
     }
 
-    this.spawnTimer += dt;
+    this.goodTimer += dt;
 
-    if (this.spawnTimer >= SPAWN_ON_TIME) {
-      this.spawnTimer -= SPAWN_ON_TIME;
-      this.spawn(this.spawnTimer);
+    if (this.goodTimer >= SPAWN_ON_TIME) {
+      this.goodTimer -= SPAWN_ON_TIME;
+      this.spawn(this.goodTimer);
+    }
+
+    this.badTimer += dt;
+
+    if (this.badTimer >= this.badNextSpawnTime) {
+      this.badTimer -= this.badNextSpawnTime;
+      this.badNextSpawnTime = getRandomArbitrary(0.2, 2.0);
+
+      this.spawn(this.badTimer, FishType.Ouch);
     }
   };
 
   end = () => {
+    hideUI("play");
     removeInputListener(this.handleClick);
   };
 }

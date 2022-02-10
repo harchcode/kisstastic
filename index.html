@@ -3,7 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
     <meta
       name="description"
       content="Kiss all the fishes you can find! But with caution!"
@@ -12,29 +15,36 @@
     <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
-    <div id="root" class="bg-blue-100 flex items-center">
-      <div id="play-area" class="bg-pink-200 mx-auto"></div>
-      <div
-        id="title-ui"
-        class="absolute w-full h-full flex items-center hidden noselect"
-      >
+    <div id="root" class="bg-pink-900 flex items-center">
+      <div id="play-area" class="bg-blue-100 mx-auto"></div>
+      <div id="ui-area" class="absolute top-0 left-0 noselect">
         <div
-          class="text-center w-full mt-64 font-bold text-white text-stroke text-3xl"
+          id="title-ui"
+          class="hidden absolute w-full h-full flex items-center top-0 left-0"
         >
-          Tap to start
+          <div
+            class="text-center w-full font-bold text-white text-stroke"
+            style="font-size: 5em; margin-top: 8em"
+          >
+            Tap to start
+          </div>
         </div>
-      </div>
-      <div id="play-ui" class="absolute w-full h-full">
+        <div id="play-ui" class="hidden absolute w-full h-full">
+          <div
+            id="score"
+            class="font-bold text-white text-stroke px-8 py-2 text-center"
+            style="font-size: 5em"
+          ></div>
+        </div>
         <div
-          id="score"
-          class="font-bold text-white text-stroke text-3xl px-4 py-2 noselect"
+          id="gameover-ui"
+          class="hidden absolute w-full h-full flex items-center top-0 left-0"
         >
-          <!-- <span>0</span>
-          <span>0</span>
-          <span>0</span>
-          <span>0</span>
-          <span>0</span>
-          <span>0</span> -->
+          <div
+            class="text-center w-full mt-64 font-bold text-white text-stroke text-3xl"
+          >
+            dsfs
+          </div>
         </div>
       </div>
     </div>

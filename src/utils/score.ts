@@ -12,10 +12,16 @@ const scoreSpans = new Pool<HTMLSpanElement>(() => {
 }, 8);
 
 const numStrs = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+const blank = "";
+
+function resetScoreText(span: HTMLSpanElement) {
+  span.textContent = blank;
+}
 
 export function setScore(v: number) {
   score = v;
 
+  scoreSpans.getAll().forEach(resetScoreText);
   scoreSpans.clear();
 
   let n = Math.floor(v);

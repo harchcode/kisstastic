@@ -1,20 +1,29 @@
 import * as PIXI from "pixi.js";
 import { textures } from "../assets";
-import { APP_H } from "../constants";
+import { APP_H, FISH_COLORS } from "../constants";
 
 export class Player {
-  sprite = PIXI.Sprite.from(textures.sample);
+  sprite = new PIXI.Container();
   direction = -1;
   velocity = 0;
-  acceleration = 7500;
+  acceleration = 20000;
   maxSpeed = 2000;
 
   constructor() {
+    const body = PIXI.Sprite.from(textures.body);
+    body.tint = FISH_COLORS[0];
+    const eye = PIXI.Sprite.from(textures.eye);
+    const lip = PIXI.Sprite.from(textures.wow);
+
+    this.sprite.addChild(body);
+    this.sprite.addChild(eye);
+    this.sprite.addChild(lip);
+
     const { sprite } = this;
 
     sprite.width = 240;
     sprite.height = 160;
-    sprite.x = 4;
+    sprite.x = 32;
     sprite.y = APP_H * 0.5 - sprite.height * 0.5;
   }
 
@@ -27,14 +36,6 @@ export class Player {
     else if (this.velocity > maxSpeed) this.velocity = maxSpeed;
 
     sprite.y += this.velocity * dt;
-
-    if (sprite.y <= 0) {
-      this.velocity = 0;
-      sprite.y = 0;
-    } else if (sprite.y >= APP_H - sprite.height) {
-      this.velocity = 0;
-      sprite.y = APP_H - sprite.height;
-    }
   };
 
   changeDirection = () => {

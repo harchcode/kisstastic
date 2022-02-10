@@ -12,6 +12,7 @@
   },
   "devDependencies": {
     "@size-limit/file": "^7.0.3",
+    "@types/offscreencanvas": "^2019.6.4",
     "@types/pixi.js": "^5.0.0",
     "@typescript-eslint/eslint-plugin": "^5.1.0",
     "@typescript-eslint/parser": "^5.1.0",
