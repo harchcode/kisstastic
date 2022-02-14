@@ -8,6 +8,11 @@ import {
   showUI
 } from "../game";
 import { PlayScene } from "./play";
+import { getHighscore, getScore, updateHighscore } from "../utils/score";
+
+const currentScoreSpan = document.getElementById(
+  "current-score"
+) as HTMLSpanElement;
 
 export class GameoverScene implements Scene {
   container: PIXI.Container;
@@ -21,6 +26,16 @@ export class GameoverScene implements Scene {
   };
 
   start = () => {
+    const cs = getScore();
+    const hs = getHighscore();
+
+    if (cs > hs) {
+      currentScoreSpan.textContent = `${cs} (new best score!)`;
+      updateHighscore(cs);
+    } else {
+      currentScoreSpan.textContent = cs.toString();
+    }
+
     showUI("gameover");
     addInputListener(this.handleClick);
   };

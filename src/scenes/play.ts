@@ -11,8 +11,8 @@ import { Pool } from "../utils/pool";
 import { addScore, setScore } from "../utils/score";
 import { Fish, FishType } from "../entities/fish";
 import { Player } from "../entities/player";
-import { getRandomArbitrary } from "../utils/math";
-import { APP_H } from "../constants";
+import { getRandomArbitrary, getRandomIntInclusive } from "../utils/math";
+import { APP_H, APP_W } from "../constants";
 import { GameoverScene } from "./gameover";
 
 const SPAWN_ON_TIME = 1.0;
@@ -20,10 +20,13 @@ const SPAWN_ON_TIME = 1.0;
 export class PlayScene implements Scene {
   player = new Player();
   fishes: Pool<Fish>;
+  bubbles: Pool<PIXI.Graphics>;
   container = new PIXI.Container();
   goodTimer = 0;
   badTimer = 0;
+  bubbleTimer = 0;
   badNextSpawnTime = getRandomArbitrary(0.2, 2.0);
+  bubbleNextSpawnTime = getRandomArbitrary(0.1, 0.5);
   streak = 0;
   started = false;
 
@@ -36,7 +39,23 @@ export class PlayScene implements Scene {
     return fish;
   };
 
+  createBubble = () => {
+    const gr = new PIXI.Graphics();
+
+    gr.beginFill(0x60a5fa);
+    gr.drawCircle(1, 1, 1);
+    gr.endFill();
+    gr.alpha = 0.1;
+
+    gr.visible = false;
+
+    this.container.addChild(gr);
+
+    return gr;
+  };
+
   constructor() {
+    this.bubbles = new Pool(this.createBubble, 32);
     this.fishes = new Pool(this.createFish, 32);
   }
 
@@ -54,9 +73,26 @@ export class PlayScene implements Scene {
     fish.reset(offDT, type);
   };
 
+  spawnBubble = () => {
+    const bubble = this.bubbles.obtain();
+    bubble.visible = true;
+
+    const scale = getRandomIntInclusive(10, 30);
+    bubble.scale.x = scale;
+    bubble.scale.y = scale;
+
+    bubble.x = getRandomIntInclusive(APP_W / 2, APP_W + 100);
+    bubble.y = APP_H + 50;
+  };
+
   removeFish = (fish: Fish) => {
     fish.hide();
     this.fishes.free(fish);
+  };
+
+  removeBubble = (bubble: PIXI.Graphics) => {
+    bubble.visible = false;
+    this.bubbles.free(bubble);
   };
 
   gameOver = () => {
@@ -139,6 +175,17 @@ export class PlayScene implements Scene {
       this.checkPlayerCollision(fish);
     }
 
+    const bubbles = this.bubbles.getAll();
+
+    for (const bubble of bubbles) {
+      bubble.x -= getRandomIntInclusive(0, 400) * dt;
+      bubble.y -= getRandomIntInclusive(500, 800) * dt;
+
+      if (bubble.x < -100 || bubble.y < -100) {
+        this.removeBubble(bubble);
+      }
+    }
+
     this.goodTimer += dt;
 
     if (this.goodTimer >= SPAWN_ON_TIME) {
@@ -153,6 +200,15 @@ export class PlayScene implements Scene {
       this.badNextSpawnTime = getRandomArbitrary(0.2, 2.0);
 
       this.spawn(this.badTimer, FishType.Ouch);
+    }
+
+    this.bubbleTimer += dt;
+
+    if (this.bubbleTimer >= this.bubbleNextSpawnTime) {
+      this.bubbleTimer -= this.bubbleNextSpawnTime;
+      this.bubbleNextSpawnTime = getRandomArbitrary(0.1, 0.5);
+
+      this.spawnBubble();
     }
   };
 

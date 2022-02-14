@@ -7,9 +7,11 @@ import {
   changeScene,
   hideUI,
   removeInputListener,
-  showUI
+  showUI,
+  updateHighscoreView
 } from "../game";
 import { PlayScene } from "./play";
+import { getHighscore } from "../utils/score";
 
 const ROTATE_TIME = 0.2;
 export class TitleScene implements Scene {
@@ -40,6 +42,7 @@ export class TitleScene implements Scene {
     sprite.rotation = (15 * Math.PI) / 180;
 
     container.addChild(sprite);
+    updateHighscoreView(getHighscore().toString());
     showUI("title");
 
     addInputListener(this.handleClick);

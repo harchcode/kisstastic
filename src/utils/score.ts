@@ -1,3 +1,4 @@
+import { updateHighscoreView } from "../game";
 import { Pool } from "./pool";
 
 let score = 0;
@@ -48,4 +49,14 @@ export function addScore(v: number) {
 
 export function getScore() {
   return score;
+}
+
+export function updateHighscore(v: number) {
+  const scoreStr = v.toString();
+  localStorage.setItem("highscore", scoreStr);
+  updateHighscoreView(scoreStr);
+}
+
+export function getHighscore() {
+  return Number(localStorage.getItem("highscore") || 0);
 }

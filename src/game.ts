@@ -8,6 +8,7 @@ let currentScene: Scene;
 
 const playArea = document.getElementById("play-area") as HTMLDivElement;
 const uiArea = document.getElementById("ui-area") as HTMLDivElement;
+const highscoreSpans = document.getElementsByClassName("highscore");
 
 const app = new PIXI.Application({
   width: APP_W,
@@ -120,4 +121,10 @@ export function removeInputListener(fn: () => void) {
   tmp?.();
 
   inputMap.delete(fn);
+}
+
+export function updateHighscoreView(hs: string) {
+  for (let i = 0; i < highscoreSpans.length; i++) {
+    highscoreSpans[i].textContent = hs;
+  }
 }
