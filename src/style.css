@@ -7,9 +7,6 @@ body {
   @apply bg-white text-black font-sans;
   height: 100%;
 }
-#root {
-  height: 100%;
-}
 
 .text-stroke {
   -webkit-text-stroke: 2px black;

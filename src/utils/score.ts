@@ -1,7 +1,9 @@
+import SecureLS from "secure-ls";
 import { updateHighscoreView } from "../game";
 import { Pool } from "./pool";
 
 let score = 0;
+const ls = new SecureLS({ encodingType: "aes" });
 
 const scoreDiv = document.getElementById("score") as HTMLDivElement;
 
@@ -52,11 +54,16 @@ export function getScore() {
 }
 
 export function updateHighscore(v: number) {
-  const scoreStr = v.toString();
-  localStorage.setItem("highscore", scoreStr);
-  updateHighscoreView(scoreStr);
+  ls.set("highscore", v);
+  updateHighscoreView(v.toString());
 }
 
 export function getHighscore() {
-  return Number(localStorage.getItem("highscore") || 0);
+  try {
+    const v = ls.get("highscore");
+    return v || 0;
+  } catch (_e) {
+    ls.set("highscore", 0);
+    return 0;
+  }
 }

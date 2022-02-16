@@ -2,13 +2,15 @@ import { Scene } from "./types";
 import * as PIXI from "pixi.js";
 import { APP_ASPECT, APP_H, APP_W } from "./constants";
 import { TitleScene } from "./scenes/title";
-import { loadAssets } from "./assets";
+import { loadAssets, sounds } from "./assets";
 
 let currentScene: Scene;
 
 const playArea = document.getElementById("play-area") as HTMLDivElement;
 const uiArea = document.getElementById("ui-area") as HTMLDivElement;
 const highscoreSpans = document.getElementsByClassName("highscore");
+const loadingDiv = document.getElementById("loading") as HTMLDivElement;
+const gameDiv = document.getElementById("game") as HTMLDivElement;
 
 const app = new PIXI.Application({
   width: APP_W,
@@ -58,15 +60,26 @@ export function hideUI(id: keyof typeof uiMap) {
 }
 
 export async function initGame() {
+  try {
+    await loadAssets();
+  } catch {
+    alert("Failed to load assets!");
+    return;
+  }
+
   app.view.className = "w-full h-full";
-
-  await loadAssets();
-
-  playArea.appendChild(app.view);
 
   window.addEventListener("resize", initPlayArea);
 
   initPlayArea();
+
+  loadingDiv.classList.add("hidden");
+  gameDiv.classList.remove("hidden");
+
+  sounds.bg.loop = true;
+  sounds.bg.play();
+
+  playArea.appendChild(app.view);
 
   currentScene = new TitleScene();
   currentScene.start();

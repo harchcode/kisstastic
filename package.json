@@ -46,6 +46,8 @@
     }
   ],
   "dependencies": {
-    "pixi.js": "^6.2.2"
+    "@pixi/sound": "^4.2.0",
+    "pixi.js": "^6.2.2",
+    "secure-ls": "^1.2.6"
   }
 }

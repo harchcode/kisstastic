@@ -14,6 +14,7 @@ import { Player } from "../entities/player";
 import { getRandomArbitrary, getRandomIntInclusive } from "../utils/math";
 import { APP_H, APP_W } from "../constants";
 import { GameoverScene } from "./gameover";
+import { sounds } from "../assets";
 
 const SPAWN_ON_TIME = 1.0;
 
@@ -29,6 +30,9 @@ export class PlayScene implements Scene {
   bubbleNextSpawnTime = getRandomArbitrary(0.1, 0.5);
   streak = 0;
   started = false;
+  jumpSound = sounds["jump"];
+  deadSound = sounds["dead"];
+  kissSound = sounds["kiss"];
 
   createFish = () => {
     const fish = new Fish();
@@ -60,6 +64,9 @@ export class PlayScene implements Scene {
   }
 
   handleClick = () => {
+    this.jumpSound.currentTime = 0;
+    this.jumpSound.play();
+
     if (!this.started) {
       this.started = true;
       return;
@@ -96,6 +103,7 @@ export class PlayScene implements Scene {
   };
 
   gameOver = () => {
+    this.deadSound.play();
     changeScene(new GameoverScene(this.container));
   };
 
@@ -123,6 +131,7 @@ export class PlayScene implements Scene {
             return;
           }
 
+          this.kissSound.play();
           fish.setKissed();
 
           this.streak += 1;
