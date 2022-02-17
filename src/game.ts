@@ -1,8 +1,8 @@
 import { Scene } from "./types";
 import * as PIXI from "pixi.js";
 import { APP_ASPECT, APP_H, APP_W } from "./constants";
-import { TitleScene } from "./scenes/title";
-import { loadAssets, sounds } from "./assets";
+import { loadAssets } from "./assets";
+import { AudioPermissionScene } from "./scenes/audio-permission";
 
 let currentScene: Scene;
 
@@ -17,6 +17,8 @@ const app = new PIXI.Application({
   height: APP_H,
   backgroundAlpha: 0
 });
+
+const audioContext = new AudioContext();
 
 function initPlayArea() {
   const screenAspect = window.innerWidth / window.innerHeight;
@@ -38,7 +40,8 @@ function initPlayArea() {
 const uiMap = {
   title: document.getElementById("title-ui"),
   play: document.getElementById("play-ui"),
-  gameover: document.getElementById("gameover-ui")
+  gameover: document.getElementById("gameover-ui"),
+  audioPermission: document.getElementById("audio-permission-ui")
 };
 
 const HIDDEN_CLASS = "hidden";
@@ -73,15 +76,12 @@ export async function initGame() {
 
   initPlayArea();
 
+  playArea.appendChild(app.view);
+
   loadingDiv.classList.add("hidden");
   gameDiv.classList.remove("hidden");
 
-  sounds.bg.loop = true;
-  sounds.bg.play();
-
-  playArea.appendChild(app.view);
-
-  currentScene = new TitleScene();
+  currentScene = new AudioPermissionScene(audioContext);
   currentScene.start();
   app.stage.addChild(currentScene.container);
 

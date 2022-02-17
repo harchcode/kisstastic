@@ -42,14 +42,17 @@ export async function loadAssets() {
 
       if (resources.jump) {
         sounds.jump = resources.jump.data;
+        sounds.jump.volume = 0.4;
       }
 
       if (resources.dead) {
         sounds.dead = resources.dead.data;
+        sounds.dead.volume = 0.4;
       }
 
       if (resources.kiss) {
         sounds.kiss = resources.kiss.data;
+        sounds.kiss.volume = 0.4;
       }
 
       if (resources.bg) {
