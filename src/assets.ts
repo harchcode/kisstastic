@@ -4,7 +4,6 @@ import spritesheet from "./assets/spritesheet.json";
 import jumpWAV from "./assets/jump.wav";
 import deadWAV from "./assets/dead.wav";
 import kissWAV from "./assets/kiss.wav";
-import bgMP3 from "./assets/bg.mp3";
 
 const loader = PIXI.Loader.shared;
 
@@ -18,8 +17,7 @@ export async function loadAssets() {
       .add("spritesheetImage", spritesheetImage)
       .add("jump", jumpWAV)
       .add("dead", deadWAV)
-      .add("kiss", kissWAV)
-      .add("bg", bgMP3);
+      .add("kiss", kissWAV);
 
     loader.load((_loader, resources) => {
       if (resources.spritesheetImage.texture) {
@@ -42,21 +40,14 @@ export async function loadAssets() {
 
       if (resources.jump) {
         sounds.jump = resources.jump.data;
-        sounds.jump.volume = 0.4;
       }
 
       if (resources.dead) {
         sounds.dead = resources.dead.data;
-        sounds.dead.volume = 0.4;
       }
 
       if (resources.kiss) {
         sounds.kiss = resources.kiss.data;
-        sounds.kiss.volume = 0.4;
-      }
-
-      if (resources.bg) {
-        sounds.bg = resources.bg.data;
       }
     });
 
